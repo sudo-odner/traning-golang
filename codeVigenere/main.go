@@ -55,7 +55,7 @@ func checkAnotherSymol(message string) bool {
 	return false
 }
 
-func codeInCodeVigenere(message string, key string) string{
+func codeByCodeVigenere(message string, key string) string{
 	if !checkAnotherSymol(message) {
 		return "Err in message, has unaccess symbol"
 	}
@@ -71,9 +71,41 @@ func codeInCodeVigenere(message string, key string) string{
 	return string(newMessage)
 }
 
+func uncodingSymbolByCodeVigenere(symbolFirst rune, symboleSecond rune) rune{
+	var differenceSymbol rune = 'a' - symboleSecond
+	if differenceSymbol < 0 {
+		differenceSymbol *= -1
+	}
+	var newSymbol rune = symbolFirst - differenceSymbol
+
+	if 'A' <= symbolFirst && symbolFirst <= 'Z' && newSymbol <= 'A' {
+		return newSymbol + 26
+	}
+	if 'a' <= symbolFirst && symbolFirst <= 'z' && newSymbol <= 'a' {
+		return newSymbol + 26
+	}
+	return newSymbol
+}
+
+func uncodeByCodeVigenere(message string, key string) string{
+	if !checkAnotherSymol(message) {
+		return "Err in message, has unaccess symbol"
+	}
+	var sliceMassage = []rune(message)
+	var sliceKey = genereteKeyByMessage(message, strings.ToLower(key))
+
+	var newMessage = make([]rune, 0, len(sliceMassage))
+
+	for i := 0; i < len(sliceMassage); i++ {
+		newMessage = append(newMessage, uncodingSymbolByCodeVigenere(sliceMassage[i], sliceKey[i]))
+	}
+	fmt.Println(string(newMessage))
+	return string(newMessage)
+}
+
 func main() {
-	var message string = "test" // "CSOITEUIWUIZNSROCNKFD"
+	var message string = "zsdt"
 	var key string = "GOLANG"
 
-	codeInCodeVigenere(message, key)
+	uncodeByCodeVigenere(message, key)
 }
