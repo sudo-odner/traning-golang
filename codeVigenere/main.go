@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	// "unicode"
 	"strings"
 	"unicode/utf8"
 )
