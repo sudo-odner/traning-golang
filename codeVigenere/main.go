@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"unicode"
+	// "unicode"
 	"strings"
 	"unicode/utf8"
 )
@@ -16,32 +16,20 @@ func genereteKeyByMessage(message string, key string) []rune {
 	for i := 0; i < len(sliceMassage); i++ {
 		newKey = append(newKey, sliceKey[(i % len(sliceKey))])
 	}
-
 	return newKey
 }
 
 func codingSymbolByCodeVigenere(symbolFirst rune, symboleSecond rune) rune{
-	if 'A' <= symbolFirst && symbolFirst <= 'Z' {
-		var differenceSymbol rune = (symbolFirst - unicode.ToUpper(symboleSecond))
-		if differenceSymbol < 0 {
-			differenceSymbol *= -1
-		}
-		var newSymbol = symbolFirst + differenceSymbol
-		if newSymbol > 'Z' {
-			newSymbol -= 26
-		}
-		return newSymbol
-	}
-
-	var differenceSymbol rune = symbolFirst - symboleSecond
+	var differenceSymbol rune = 'a' - symboleSecond
 	if differenceSymbol < 0 {
 		differenceSymbol *= -1
 	}
-	var newSymbol = symbolFirst + differenceSymbol
-	if newSymbol > 'z' {
-		newSymbol -= 26
+	var newSymbol rune = symbolFirst + differenceSymbol
+
+	if 'A' <= symbolFirst && symbolFirst <= 'Z'{
+		return 'A' + ((newSymbol - 'A') % 26)
 	}
-	return newSymbol
+	return 'a' + ((newSymbol - 'a') % 26)
 }
 
 func runeInSlice(desired rune, slice []rune) bool {
@@ -80,11 +68,11 @@ func codeInCodeVigenere(message string, key string) string{
 		newMessage = append(newMessage, codingSymbolByCodeVigenere(sliceMassage[i], sliceKey[i]))
 	}
 	fmt.Println(string(newMessage))
-	return ""
+	return string(newMessage)
 }
 
 func main() {
-	var message string = "CSOITEUIWUIZNSROCNKFD"
+	var message string = "test" // "CSOITEUIWUIZNSROCNKFD"
 	var key string = "GOLANG"
 
 	codeInCodeVigenere(message, key)
