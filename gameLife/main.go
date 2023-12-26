@@ -12,7 +12,7 @@ const (
 	width = 80
 	height = 15
 	live = "#"
-	dead = " "
+	dead = "-"
 	percentAlive = 0.25
 )
 
@@ -46,6 +46,51 @@ func (univers Universe) randSeed(percentAlive float64) Universe {
 	}
 	return univers
 }
+func (univers Universe) Alive(x, y int) bool {
+	height, width := len(univers), len(univers[0])
+
+	if x < 0{
+		x = height + (x % height)
+	}
+	if x > 0{
+		x = (x % height)
+	}
+	if y < 0{
+		y = width + (y % width)
+	}
+	if y > 0{
+		y = (y % width)
+	}
+
+	fmt.Println(">", x, y, ">", univers[x][y])
+	if univers[x][y] {
+		return true
+	}
+	return false
+}
+
+func (univers Universe) Neighbors(x, y int) int {
+	height, width := len(univers), len(univers[0])
+	// Я еще не работал с ошибками в go поэтому простй отладчик
+	if height < x || width < y {
+		fmt.Println("cord x more size or cord y more size", x, y, height, width)
+		return -1
+	}
+	var count int = 0
+	for h := -1; h < 2; h++{
+		for w := -1; w < 2; w++{
+			if univers.Alive(x+h, y+w){
+				count++
+				fmt.Println(x+h, y+w, "|", x + 1, y + 1)
+			}
+		}
+	}
+	if univers.Alive(x, y) {
+		count--
+	}
+	fmt.Println(count)
+	return count
+}
 
 func (univers Universe) Show() {
 	fmt.Printf("%v\n", strings.Repeat("=", len(univers[0]) + 2))
@@ -73,6 +118,7 @@ func main() {
 	univers = univers.createSize(width, height)
 	univers.randSeed(0.25)
 	univers.Show()
+	univers.Neighbors(14,79)
 
 	// fmt.Println(univers)
 }
