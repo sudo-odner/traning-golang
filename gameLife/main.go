@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"math/rand"
-    "os"
-    "os/exec"
+	"os"
+	"os/exec"
 	"time"
 )
 
@@ -15,7 +15,7 @@ const (
 	width = 80
 	height = 15
 	live = "#"
-	dead = "-"
+	dead = " "
 	percentAlive = 0.25
 )
 
@@ -49,6 +49,21 @@ func (univers Universe) randSeed(percentAlive float64) Universe {
 	}
 	return univers
 }
+
+func (univers Universe) gilderSeed() Universe {
+	// Я еще не работал с ошибками в go поэтому простй отладчик
+	if percentAlive > 1 || percentAlive < 0 {
+		return univers
+	}
+	univers[0][0] = true
+	univers[0][2] = true
+	univers[1][1] = true
+	univers[1][2] = true
+	univers[2][1] = true
+
+	return univers
+}
+
 func (univers Universe) Alive(x, y int) bool {
 	height, width := len(univers), len(univers[0])
 
@@ -151,19 +166,17 @@ func (univers Universe) Show() {
 func main() {
 	var univers Universe
 	univers = univers.createSize(width, height)
-	univers.randSeed(0.25)
-
-	var 
-	for i != 0{
+	// univers.randSeed(0.25)
+	univers.gilderSeed()
+	
+	var index = 0
+	for index != 100{
 		univers.Show()
+		univers.NextStep()
+		time.Sleep(100 * time.Millisecond) 
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+		index++
 	}
-	univers.Show()
-	univers.NextStep()
-	univers.Show()
-
-    cmd := exec.Command("clear")
-    cmd.Stdout = os.Stdout
-    cmd.Run()
-
-	// fmt.Println(univers)
 }
