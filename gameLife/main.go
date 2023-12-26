@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"math/rand"
 )
 
 type Universe [][]bool
@@ -12,17 +13,31 @@ const (
 	height = 15
 	live = "#"
 	dead = " "
+	percentAlive = 0.25
 )
 
 func (univers Universe) createSize(width int, height int) Universe{
-	new_univers := make([][]bool, height)
+	newUnivers := make(Universe, height)
 	for i := 0; i < height; i++ {
-		new_univers[i] = make([]bool, width)
+		newUnivers[i] = make([]bool, width)
 	}
-	return Universe(new_univers)
+	return Universe(newUnivers)
 }
 
-func (univers Universe) printUniverse() {
+func (univers Universe) randSeed() Universe {
+	width, height := len(univers[0]), len(univers)
+	var liveCells int = int(float64(width) * float64(height) * percentAlive)// По условию задачи нужно заполнить 25%
+	for i := 0; i < liveCells; i++ {
+		randHeihgt, randWidth := rand.Intn(height), rand.Intn(width)
+		for univers[randHeihgt][randWidth]{
+			randHeihgt, randWidth = rand.Intn(height), rand.Intn(width)
+		}
+		univers[randHeihgt][randWidth] = true
+	}
+	return univers
+}
+
+func (univers Universe) Show() {
 	fmt.Printf("%v\n", strings.Repeat("=", len(univers[0]) + 2))
 	for _, line := range univers {
 		for index, info := range line {
@@ -46,7 +61,8 @@ func (univers Universe) printUniverse() {
 func main() {
 	var univers Universe
 	univers = univers.createSize(width, height)
-	univers.printUniverse()
+	univers.randSeed()
+	univers.Show()
 
 	// fmt.Println(univers)
 }
