@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 	"math/rand"
+    "os"
+    "os/exec"
+	"time"
 )
 
 type Universe [][]bool
@@ -61,8 +64,6 @@ func (univers Universe) Alive(x, y int) bool {
 	if y > 0{
 		y = (y % width)
 	}
-
-	fmt.Println(">", x, y, ">", univers[x][y])
 	if univers[x][y] {
 		return true
 	}
@@ -81,15 +82,49 @@ func (univers Universe) Neighbors(x, y int) int {
 		for w := -1; w < 2; w++{
 			if univers.Alive(x+h, y+w){
 				count++
-				fmt.Println(x+h, y+w, "|", x + 1, y + 1)
 			}
 		}
 	}
 	if univers.Alive(x, y) {
 		count--
 	}
-	fmt.Println(count)
 	return count
+}
+
+func (univers Universe) next(x, y int) bool {
+	if univers.Alive(x, y) && univers.Neighbors(x, y) < 2 {
+		return false
+	}
+	if univers.Alive(x, y) && (univers.Neighbors(x, y) == 2 || univers.Neighbors(x, y) == 3){
+		return true
+	}
+	if univers.Alive(x, y) && (univers.Neighbors(x, y) > 3) {
+		return false
+	}
+	if !univers.Alive(x, y) && (univers.Neighbors(x, y) == 3) {
+		return true
+	}
+
+	// Тут желательно внести проверку
+	return univers.Alive(x, y)
+}
+
+func (univers Universe) NextStep() Universe {
+	height, width := len(univers), len(univers[0])
+	var newUnivers Universe
+	newUnivers = newUnivers.createSize(width, height)
+	for i := 0; i < height; i++ {
+		for j := 0; j < width; j++ {
+			newUnivers[i][j] = univers.next(i, j)
+		}
+	}
+
+	for i := 0; i < height; i++ {
+		for j := 0; j < width; j++ {
+			univers[i][j] = newUnivers[i][j]
+		}
+	}
+	return univers
 }
 
 func (univers Universe) Show() {
@@ -110,15 +145,25 @@ func (univers Universe) Show() {
 		}
 		fmt.Printf("\n")
 	}
-	fmt.Printf("%v\n", strings.Repeat("=", len(univers[0]) + 2))
+	fmt.Printf("%v\n\n", strings.Repeat("=", len(univers[0]) + 2))
 }
 
 func main() {
 	var univers Universe
 	univers = univers.createSize(width, height)
 	univers.randSeed(0.25)
+
+	var 
+	for i != 0{
+		univers.Show()
+	}
 	univers.Show()
-	univers.Neighbors(14,79)
+	univers.NextStep()
+	univers.Show()
+
+    cmd := exec.Command("clear")
+    cmd.Stdout = os.Stdout
+    cmd.Run()
 
 	// fmt.Println(univers)
 }
