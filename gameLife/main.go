@@ -17,6 +17,11 @@ const (
 )
 
 func (univers Universe) createSize(width int, height int) Universe{
+	// Я еще не работал с ошибками в go поэтому простй отладчик
+	if width <= 0 || height <= 0 {
+		return univers
+	}
+
 	newUnivers := make(Universe, height)
 	for i := 0; i < height; i++ {
 		newUnivers[i] = make([]bool, width)
@@ -24,7 +29,12 @@ func (univers Universe) createSize(width int, height int) Universe{
 	return Universe(newUnivers)
 }
 
-func (univers Universe) randSeed() Universe {
+func (univers Universe) randSeed(percentAlive float64) Universe {
+	// Я еще не работал с ошибками в go поэтому простй отладчик
+	if percentAlive > 1 || percentAlive < 0 {
+		return univers
+	}
+
 	width, height := len(univers[0]), len(univers)
 	var liveCells int = int(float64(width) * float64(height) * percentAlive)// По условию задачи нужно заполнить 25%
 	for i := 0; i < liveCells; i++ {
@@ -61,7 +71,7 @@ func (univers Universe) Show() {
 func main() {
 	var univers Universe
 	univers = univers.createSize(width, height)
-	univers.randSeed()
+	univers.randSeed(0.25)
 	univers.Show()
 
 	// fmt.Println(univers)
