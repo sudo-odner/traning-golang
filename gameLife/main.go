@@ -2,24 +2,25 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"math/rand"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
 type Universe [][]bool
 
+// test GitHub connection by ssh key
 const (
-	width = 80
-	height = 15
-	live = "#"
-	dead = " "
+	width        = 80
+	height       = 15
+	live         = "#"
+	dead         = " "
 	percentAlive = 0.25
 )
 
-func (univers Universe) createSize(width int, height int) Universe{
+func (univers Universe) createSize(width int, height int) Universe {
 	// Я еще не работал с ошибками в go поэтому простй отладчик
 	if width <= 0 || height <= 0 {
 		return univers
@@ -39,10 +40,10 @@ func (univers Universe) randSeed(percentAlive float64) Universe {
 	}
 
 	width, height := len(univers[0]), len(univers)
-	var liveCells int = int(float64(width) * float64(height) * percentAlive)// По условию задачи нужно заполнить 25%
+	var liveCells int = int(float64(width) * float64(height) * percentAlive) // По условию задачи нужно заполнить 25%
 	for i := 0; i < liveCells; i++ {
 		randHeihgt, randWidth := rand.Intn(height), rand.Intn(width)
-		for univers[randHeihgt][randWidth]{
+		for univers[randHeihgt][randWidth] {
 			randHeihgt, randWidth = rand.Intn(height), rand.Intn(width)
 		}
 		univers[randHeihgt][randWidth] = true
@@ -67,16 +68,16 @@ func (univers Universe) gilderSeed() Universe {
 func (univers Universe) Alive(x, y int) bool {
 	height, width := len(univers), len(univers[0])
 
-	if x < 0{
+	if x < 0 {
 		x = height + (x % height)
 	}
-	if x > 0{
+	if x > 0 {
 		x = (x % height)
 	}
-	if y < 0{
+	if y < 0 {
 		y = width + (y % width)
 	}
-	if y > 0{
+	if y > 0 {
 		y = (y % width)
 	}
 	if univers[x][y] {
@@ -93,9 +94,9 @@ func (univers Universe) Neighbors(x, y int) int {
 		return -1
 	}
 	var count int = 0
-	for h := -1; h < 2; h++{
-		for w := -1; w < 2; w++{
-			if univers.Alive(x+h, y+w){
+	for h := -1; h < 2; h++ {
+		for w := -1; w < 2; w++ {
+			if univers.Alive(x+h, y+w) {
 				count++
 			}
 		}
@@ -110,7 +111,7 @@ func (univers Universe) next(x, y int) bool {
 	if univers.Alive(x, y) && univers.Neighbors(x, y) < 2 {
 		return false
 	}
-	if univers.Alive(x, y) && (univers.Neighbors(x, y) == 2 || univers.Neighbors(x, y) == 3){
+	if univers.Alive(x, y) && (univers.Neighbors(x, y) == 2 || univers.Neighbors(x, y) == 3) {
 		return true
 	}
 	if univers.Alive(x, y) && (univers.Neighbors(x, y) > 3) {
@@ -143,24 +144,24 @@ func (univers Universe) NextStep() Universe {
 }
 
 func (univers Universe) Show() {
-	fmt.Printf("%v\n", strings.Repeat("=", len(univers[0]) + 2))
+	fmt.Printf("%v\n", strings.Repeat("=", len(univers[0])+2))
 	for _, line := range univers {
 		for index, info := range line {
 			if index == 0 {
 				fmt.Printf("|")
 			}
-			if info{
+			if info {
 				fmt.Printf("%v", live)
 			} else {
 				fmt.Printf("%v", dead)
 			}
-			if index == len(univers[0]) - 1 {
+			if index == len(univers[0])-1 {
 				fmt.Printf("|")
 			}
 		}
 		fmt.Printf("\n")
 	}
-	fmt.Printf("%v\n\n", strings.Repeat("=", len(univers[0]) + 2))
+	fmt.Printf("%v\n\n", strings.Repeat("=", len(univers[0])+2))
 }
 
 func main() {
@@ -168,12 +169,12 @@ func main() {
 	univers = univers.createSize(width, height)
 	// univers.randSeed(0.25)
 	univers.gilderSeed()
-	
+
 	var index = 0
-	for index != 100{
+	for index != 100 {
 		univers.Show()
 		univers.NextStep()
-		time.Sleep(100 * time.Millisecond) 
+		time.Sleep(100 * time.Millisecond)
 		cmd := exec.Command("clear")
 		cmd.Stdout = os.Stdout
 		cmd.Run()
