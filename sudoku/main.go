@@ -41,6 +41,17 @@ func (area *areaSudoku) setCell(X, Y, value int8) {
 	}
 }
 
+func (area *areaSudoku) setCellZero(X, Y int8) {
+	if X < 0 && X > 9 || Y < 0 && Y > 9 {
+		panic("Координаты X или Y выходят за диапазон")
+	}
+	err := area.area[X][Y].setCell(0)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (area *areaSudoku) returnArea() {
 	var mainLine = strings.Repeat("-", 41)
 	var otherLine = "[]---|---|---[]---|---|---[]---|---|---[]"
@@ -117,5 +128,8 @@ func main() {
 		{0, 0, 0, 0, 8, 0, 0, 7, 9},
 	})
 	game1.setCell(0, 2, 5)
+	game1.returnArea()
+	game1.setCell(0, 2, 2)
+	game1.setCell(0, 1, 2)
 	game1.returnArea()
 }
