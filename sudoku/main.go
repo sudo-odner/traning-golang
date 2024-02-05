@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -9,32 +10,50 @@ type cellFiledSudoku struct {
 	accessChange bool
 }
 
+func (cell *cellFiledSudoku) setCell(value int8) error {
+	if value > 9 && value < 0 {
+		return errors.New("Вышел за диапазон чисел")
+	}
+	if cell.accessChange != true {
+		return errors.New("Данное поле не изменяется")
+	}
+	cell.data = value
+	return nil
+}
+
+func (cell *cellFiledSudoku) getCell() (int8, bool, error) {
+	return cell.data, cell.accessChange, nil
+}
+
 type areaSudoku struct {
 	area [9][9]cellFiledSudoku
 }
 
+func (area *areaSudoku) setCell(X, Y, value int8) {
+	if X < 0 && X > 9 || Y < 0 && Y > 9 {
+		panic("Координаты X или Y выходят за диапазон")
+	}
+	err := area.area[X][Y].setCell(value)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 func NewSudoku(area [9][9]int8) areaSudoku {
 	var newAreaSudoku [9][9]cellFiledSudoku
-	// if len(area) != 9 {
-	// 	panic("Арена имеет не стандартый вид по y координатам")
-	// }
-	// for _, yArea := range area {
-	// 	if len(yArea) != 9 {
-	// 		panic("Арена имеет не стандартый вид по x координатам")
-	// 	}
-	// }
 
-	for idY, yArea := range area {
-		for idX, xArea := range yArea {
+	for Y, yArea := range area {
+		for X, xArea := range yArea {
 			if xArea != 0 {
-				newAreaSudoku[idY][idX] = cellFiledSudoku{
-					data:         xArea,
-					accessChange: true,
-				}
-			} else {
-				newAreaSudoku[idY][idX] = cellFiledSudoku{
+				newAreaSudoku[Y][X] = cellFiledSudoku{
 					data:         xArea,
 					accessChange: false,
+				}
+			} else {
+				newAreaSudoku[Y][X] = cellFiledSudoku{
+					data:         xArea,
+					accessChange: true,
 				}
 			}
 		}
@@ -54,5 +73,6 @@ func main() {
 		{0, 0, 0, 4, 1, 9, 0, 0, 5},
 		{0, 0, 0, 0, 8, 0, 0, 7, 9},
 	})
+	game1.setCell(0, 2, 5)
 	fmt.Println(game1)
 }
